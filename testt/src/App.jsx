@@ -32,6 +32,7 @@ const AppHeader = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
   h1 {
     font-size: 1.8rem;
     color: #d64000; // Reuters orange accent
@@ -105,8 +106,8 @@ const Categrios = styled.div`
 // Main Grid Layout
 const Grid = styled.main`
   display: grid;
-  grid-template-columns: repeat(4, 1fr); // Default: 4 columns
-  gap: 20px; // Default gap for desktop
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px; 
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
@@ -123,29 +124,28 @@ const Grid = styled.main`
 
   // Styles for Laptop and smaller (where separators appear)
   @media (max-width: ${device.laptop}) {
-    grid-template-columns: repeat(3, 1fr); // 3 columns for laptop
-    gap: 0 20px; // Remove row gap, keep column gap
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 0 20px;
     
     > div {
-        border-bottom: 1px solid #e0e0e0; // Add separator line
-        padding-bottom: 20px; // Add padding below item content
-        margin-bottom: 20px; // Add margin to simulate row gap visually
+        border-bottom: 1px solid #e0e0e0; 
+        padding-bottom: 20px; 
+        margin-bottom: 20px; 
     }
 
 
 
     > div:first-child {
       grid-column: 1 / 3;
-      margin-bottom: 20px; // Ensure hero item has margin too
+      margin-bottom: 20px; 
     }
   }
 
   @media (max-width: ${device.tablet}) {
-    grid-template-columns: repeat(2, 1fr); // 2 columns for tablet
-    gap: 0 20px; // Remove row gap, keep column gap
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 0 20px; 
     
      > div {
-        /* Styles inherited from laptop query */
      }
 
     > div:first-child {
@@ -154,12 +154,12 @@ const Grid = styled.main`
   }
 
   @media (max-width: ${device.mobile}) {
-    grid-template-columns: 1fr; // 1 column for mobile
-    gap: 0; // Remove all gaps
+    grid-template-columns: 1fr; 
+    gap: 0;
 
     > div {
-        /* Styles inherited */
-        padding-left: 0; // Adjust padding if needed for single column
+       
+        padding-left: 0; 
         padding-right: 0;
     }
     
@@ -174,13 +174,13 @@ const Grid = styled.main`
   }
 `;
 
-// Individual Item Styling (Transparent background, no shadow/border)
+
 const ItemStyle = styled.div`
-  background-color: transparent; // Transparent background
-  border-radius: 0; // Remove border-radius if desired
+  background-color: transparent; 
+  border-radius: 0; 
   overflow: hidden;
-  border: none; // Remove border
-  box-shadow: none; // Remove box-shadow
+  border: none; 
+  box-shadow: none; 
   transition: transform 0.2s;
   text-align: start;
   display: flex;
@@ -188,7 +188,7 @@ const ItemStyle = styled.div`
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: none; // Ensure no shadow on hover either
+    box-shadow: none; 
   }
 
   .news-image {
@@ -287,17 +287,26 @@ function App() {
     ));
   }
 
+  function HandleResetPage(){
+    setCurrentCategory(newsItems);
+    setinnerCategoryState(false);
+    setSelectedCategory(null);
+  }
+
   // Get unique inner categories for the selected category
-  const uniqueInnerCategories = [...new Set(
-    currentCategory.map(item => item.innerCategory)
-  )];
-  console.log(uniqueInnerCategories);
+  const uniqueInnerCategories = selectedCategory 
+    ? [...new Set(
+        newsItems
+          .filter(item => item.category === selectedCategory)
+          .map(item => item.innerCategory)
+      )]
+    : [];
 
   return (
     <>
       <GlobalStyle />
       <AppHeader>
-        <h1>Nasrtology</h1>
+        <h1 onClick={()=>HandleResetPage()}>Nasrtology</h1>
         <Categrios>
           <button onClick={() => HandleCategory('Technology')}>Technology</button>
           <button onClick={() => HandleCategory('Sports')}>Sports</button>
