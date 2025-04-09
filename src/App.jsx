@@ -302,16 +302,20 @@ function App() {
       )]
     : [];
 
+  // Get unique categories
+  const uniqueCategories = [...new Set(newsItems.map(item => item.category))];
+
   return (
     <>
       <GlobalStyle />
       <AppHeader>
         <h1 onClick={()=>HandleResetPage()}>Nasrtology</h1>
         <Categrios>
-          <button onClick={() => HandleCategory('Technology')}>Technology</button>
-          <button onClick={() => HandleCategory('Sports')}>Sports</button>
-          <button onClick={() => HandleCategory('Environment')}>Environment</button>
-          <button onClick={() => HandleCategory('Business')}>Business</button>
+          {uniqueCategories.map((category, index) => (
+            <button key={index} onClick={() => HandleCategory(category)}>
+              {category}
+            </button>
+          ))}
         </Categrios> 
       </AppHeader>
       <Inner_Categrios>
