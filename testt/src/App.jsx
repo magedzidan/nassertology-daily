@@ -254,7 +254,7 @@ function formatDate(dateString) {
 }
 
 // News Item Component (now simpler, styling handled by ItemStyle)
-function NewsItem({ title, category, date, imageUrl,innerCategory }) {
+function NewsItem({ title, category, date, imageUrl, innerCategory }) {
   return (
     <>
       <img src={imageUrl} alt={title} className="news-image" />
@@ -273,11 +273,25 @@ function NewsItem({ title, category, date, imageUrl,innerCategory }) {
 function App() {
   const [currentCategory, setCurrentCategory] = useState(newsItems);
   const [innerCategoryState, setinnerCategoryState] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   function HandleCategory(category) {
+    setSelectedCategory(category);
     setCurrentCategory(newsItems.filter((item) => item.category === category));
     setinnerCategoryState(true);
   }
+
+  function HandleInnerCategory(innerCategory) {
+    setCurrentCategory(newsItems.filter((item) => 
+      item.category === selectedCategory && item.innerCategory === innerCategory
+    ));
+  }
+
+  // Get unique inner categories for the selected category
+  const uniqueInnerCategories = [...new Set(
+    currentCategory.map(item => item.innerCategory)
+  )];
+  console.log(uniqueInnerCategories);
 
   return (
     <>
@@ -292,27 +306,25 @@ function App() {
         </Categrios> 
       </AppHeader>
       <Inner_Categrios>
-        <button onClick={() => HandleCategory('Technology')}>Technology</button>
-        <button onClick={() => HandleCategory('Sports')}>Sports</button>
-        <button onClick={() => HandleCategory('Environment')}>Environment</button>
-        <button onClick={() => HandleCategory('Business')}>Business</button>
+        {innerCategoryState && uniqueInnerCategories.map((innerCategory, index) => (
+          <button 
+            key={index} 
+            onClick={() => HandleInnerCategory(innerCategory)}
+          >
+            {innerCategory}
+          </button>
+        ))}
       </Inner_Categrios>
       <Grid>
         {currentCategory.map((item, index) => (
           <ItemStyle key={item.id}>
-              {innerCategoryState?
             <NewsItem
               title={item.title}
+              category={item.category}
               innerCategory={item.innerCategory}
               date={item.date}
               imageUrl={item.imageUrl}
-            />: 
-             <NewsItem
-            title={item.title}
-            category={item.category}
-            date={item.date}
-            imageUrl={item.imageUrl}
-          />}
+            />
           </ItemStyle>
         ))}
       </Grid>
