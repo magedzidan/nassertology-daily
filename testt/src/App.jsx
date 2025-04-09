@@ -19,6 +19,7 @@ const GlobalStyle = createGlobalStyle`
     text-decoration: none;
     &:hover {
       text-decoration: underline;
+
     }
   }
 `;
@@ -61,6 +62,14 @@ margin: 10px 20px;
     transform: translateY(-1px);
     transition: all 0.3s ease;
   }
+
+  &:focus {
+    font-weight:900;
+    box-shadow: 0 4px 8px rgba(72, 60, 60, 0.2);
+    transform: translateY(-1px);
+    transition: all 0.3s ease;
+
+    }
 }
 `
 
@@ -82,6 +91,13 @@ const Categrios = styled.div`
     color: #483c3c;
     &:hover {
       font-weight: 800;
+      transition: all 0.1s ease;
+
+    }
+    &:focus {
+      font-weight: 800;
+      transition: all 0.1s ease;
+
     }
   }
 `;
@@ -189,13 +205,20 @@ const ItemStyle = styled.div`
       flex-direction: column;
       justify-content: space-between; 
   }
-
+  .news-inner-category{
+    display:block;
+      font-size: 0.75rem;
+      color: #555;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+  }
   .news-category {
       display: inline-block;
       font-size: 0.75rem;
       color: #555;
       margin-bottom: 8px;
       text-transform: uppercase;
+      font-weight: 700;
   }
 
   .news-title {
@@ -231,13 +254,14 @@ function formatDate(dateString) {
 }
 
 // News Item Component (now simpler, styling handled by ItemStyle)
-function NewsItem({ title, category, date, imageUrl }) {
+function NewsItem({ title, category, date, imageUrl,innerCategory }) {
   return (
     <>
       <img src={imageUrl} alt={title} className="news-image" />
       <div className="news-content">
         <div> 
           <span className="news-category">{category}</span>
+          <span className="news-inner-category">{innerCategory}</span>
           <h2 className="news-title">{title}</h2>
         </div>
         <span className="news-date">{formatDate(date)}</span>
@@ -247,34 +271,48 @@ function NewsItem({ title, category, date, imageUrl }) {
 }
 
 function App() {
+  const [currentCategory, setCurrentCategory] = useState(newsItems);
+  const [innerCategoryState, setinnerCategoryState] = useState(false);
+
+  function HandleCategory(category) {
+    setCurrentCategory(newsItems.filter((item) => item.category === category));
+    setinnerCategoryState(true);
+  }
+
   return (
     <>
       <GlobalStyle />
       <AppHeader>
         <h1>Nasrtology</h1>
         <Categrios>
-        <button>Technology</button>
-        <button>Sports</button>
-        <button>Environment</button>
-        <button>Business</button>
-          </Categrios> 
+          <button onClick={() => HandleCategory('Technology')}>Technology</button>
+          <button onClick={() => HandleCategory('Sports')}>Sports</button>
+          <button onClick={() => HandleCategory('Environment')}>Environment</button>
+          <button onClick={() => HandleCategory('Business')}>Business</button>
+        </Categrios> 
       </AppHeader>
       <Inner_Categrios>
-        <button>Artfical Intellegence</button>
-        <button>Cyber Secuirty</button>
-        <button>Space</button>
-        <button>Distrubted</button>
-
+        <button onClick={() => HandleCategory('Technology')}>Technology</button>
+        <button onClick={() => HandleCategory('Sports')}>Sports</button>
+        <button onClick={() => HandleCategory('Environment')}>Environment</button>
+        <button onClick={() => HandleCategory('Business')}>Business</button>
       </Inner_Categrios>
       <Grid>
-        {newsItems.map((item, index) => (
+        {currentCategory.map((item, index) => (
           <ItemStyle key={item.id}>
+              {innerCategoryState?
             <NewsItem
               title={item.title}
-              category={item.category}
+              innerCategory={item.innerCategory}
               date={item.date}
               imageUrl={item.imageUrl}
-            />
+            />: 
+             <NewsItem
+            title={item.title}
+            category={item.category}
+            date={item.date}
+            imageUrl={item.imageUrl}
+          />}
           </ItemStyle>
         ))}
       </Grid>
