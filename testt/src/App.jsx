@@ -28,13 +28,17 @@ const AppHeader = styled.header`
   padding: 10px 20px;
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   h1 {
     font-size: 1.8rem;
     color: #d64000; // Reuters orange accent
     margin: 0;
   }
 `;
-const Categrios=styled.div`
+
+const Inner_Categrios=styled.div`
 display:flex;
 flex-direction:row;
 gap:10px;
@@ -44,19 +48,43 @@ margin: 10px 20px;
 
 >button{
   background-color: white;
-  padding: 10px 40px;
+  padding: 10px 20px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.6rem;
+  font-weight: 800;
   color: #483c3c;
   &:hover {
-    font-weight:800;
+    font-weight:900;
+    box-shadow: 0 4px 8px rgba(72, 60, 60, 0.2);
+    transform: translateY(-1px);
+    transition: all 0.3s ease;
   }
 }
 `
 
+const Categrios = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #847f7f;
+
+  > button {
+    background-color: white;
+    padding: 10px 40px;
+    border: 1px solid #ffffff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #483c3c;
+    &:hover {
+      font-weight: 800;
+    }
+  }
+`;
 
 // Main Grid Layout
 const Grid = styled.main`
@@ -223,15 +251,21 @@ function App() {
     <>
       <GlobalStyle />
       <AppHeader>
-        <h1>Nasrtology</h1> 
+        <h1>Nasrtology</h1>
+        <Categrios>
+        <button>Technology</button>
+        <button>Sports</button>
+        <button>Environment</button>
+        <button>Business</button>
+          </Categrios> 
       </AppHeader>
-      <Categrios>
+      <Inner_Categrios>
         <button>Artfical Intellegence</button>
         <button>Cyber Secuirty</button>
         <button>Space</button>
         <button>Distrubted</button>
 
-      </Categrios>
+      </Inner_Categrios>
       <Grid>
         {newsItems.map((item, index) => (
           <ItemStyle key={item.id}>
