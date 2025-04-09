@@ -34,6 +34,29 @@ const AppHeader = styled.header`
     margin: 0;
   }
 `;
+const Categrios=styled.div`
+display:flex;
+flex-direction:row;
+gap:10px;
+max-width:800px;
+justify-content:start;
+margin: 10px 20px;
+
+>button{
+  background-color: white;
+  padding: 10px 40px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #483c3c;
+  &:hover {
+    font-weight:800;
+  }
+}
+`
+
 
 // Main Grid Layout
 const Grid = styled.main`
@@ -132,7 +155,7 @@ const ItemStyle = styled.div`
   }
 
   .news-content {
-      padding: 15px 0 0 0; // Remove side/bottom padding here
+      padding: 10px 0 0 0; // Remove side/bottom padding here
       flex-grow: 1; 
       display: flex;
       flex-direction: column;
@@ -149,7 +172,7 @@ const ItemStyle = styled.div`
 
   .news-title {
       font-size: 1.1rem;
-      margin: 0 0 10px 0;
+      margin: 0 0 0px 0;
       color: #111;
       font-weight: 600;
       line-height: 1.3;
@@ -159,7 +182,7 @@ const ItemStyle = styled.div`
       display: block;
       color: #666;
       font-size: 0.8rem;
-      margin-top: 10px;
+      margin-top: 5px;
   }
 `;
 
@@ -200,8 +223,15 @@ function App() {
     <>
       <GlobalStyle />
       <AppHeader>
-        <h1>News Feed</h1> 
+        <h1>Nasrtology</h1> 
       </AppHeader>
+      <Categrios>
+        <button>Artfical Intellegence</button>
+        <button>Cyber Secuirty</button>
+        <button>Space</button>
+        <button>Distrubted</button>
+
+      </Categrios>
       <Grid>
         {newsItems.map((item, index) => (
           <ItemStyle key={item.id}>
