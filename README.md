@@ -1,69 +1,118 @@
-# NasserTology Daily
+# NasserTology Daily - Reuters News Integration
 
-NasserTology Daily is a modern news platform built with **React** that provides a clean, professional layout for displaying news articles. The application features category-based filtering and a responsive design that adapts to various screen sizes.
+## Project Overview
 
----
-![nassertology](https://github.com/user-attachments/assets/63639fa8-ec61-4c33-9308-192f6135f1a8)
+This project integrates real-time news articles from Reuters (specifically, World News via a FiveFilters RSS feed) into the "NasserTology Daily" React application. It replaces the original dummy data with fetched news content, including titles, summaries, images (if available), publication dates, and links to the original articles.
 
-## Tech Stack
+## Features
 
-- **React 19**: The application is built using React 19 for its component-based architecture.
-- **Vite**: Vite is used as the build tool for faster development and optimized production builds.
-- **Styled-components**: CSS-in-JS approach used for styling components, providing a modern and dynamic styling solution.
+*   Fetches news articles from a reliable Reuters World News RSS feed.
+*   Parses RSS/XML data and extracts relevant fields (title, summary, image URL, date, category, article URL).
+*   Saves fetched data into a structured JSON file (`src/reuters_news.json`).
+*   Integrates the fetched news data into the existing React application structure.
+*   Displays news articles with titles, summaries, images, and publication dates.
+*   Article titles link directly to the original Reuters source.
+*   Includes a Node.js script (`scripts/update_news.js`) for manually refreshing the news data.
+*   The scraper script includes error handling with retry logic for robustness.
 
----
+## Technology Stack
 
-## Core Functionality
+*   **Frontend:** React (using Vite), styled-components
+*   **News Fetching:** Node.js
+*   **HTTP Client:** Axios
+*   **XML Parsing:** fast-xml-parser
+*   **News Source:** FiveFilters.org pre-made Reuters World News RSS feed
 
-- **News Display**:
-  - The application displays news articles in a **card-based layout**.
-  - Each news item includes the title, category, date, and image.
-  
-- **Category-Based Filtering**:
-  - News articles can be filtered based on categories.
-  - Allows for easy navigation through various sections such as Technology, Politics, Sports, etc.
+## Setup and Installation
 
-- **Inner Category Navigation**:
-  - Provides navigation within each category to explore various articles in that category.
-  
----
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/magedzidan/nassertology-daily.git
+    cd nassertology-daily
+    ```
+2.  **Install dependencies:** This installs both React app dependencies and the dependencies needed for the news update script.
+    ```bash
+    npm install
+    ```
 
-## UI/UX Features
+## Running the Application Locally
 
-- **Clean and Professional Design**:
-  - The design is inspired by **Reuters**, with a focus on readability and a professional aesthetic.
+1.  **Start the development server:**
+    ```bash
+    npm run dev
+    ```
+2.  Open your browser and navigate to the local URL provided (usually `http://localhost:5173` or similar).
 
-- **Responsive Layout**:
-  - The layout adjusts dynamically to different screen sizes, ensuring an optimal viewing experience on desktops, tablets, and mobiles.
+The application will initially display the news data present in `src/reuters_news.json` at the time of the last update.
 
-- **Category Navigation System**:
-  - A category navigation system enables users to quickly switch between different sections of news (e.g., World, Technology, Health).
+## Updating News Data
 
-- **Card-Based News Presentation**:
-  - News items are presented in a **card layout**, making it easy for users to browse through articles at a glance.
+Automated scheduling for news updates is currently unavailable. To manually refresh the news data displayed in the application, follow the instructions in the `manual_update_instructions.md` file (which will also be included in the final delivery).
 
-- **Date Formatting for Articles**:
-  - Each article’s publication date is formatted for easy readability (e.g., "Jan 15, 2023").
+In summary, you need to run the following command in the project root directory:
 
----
+```bash
+node scripts/update_news.js
+```
 
-## Design Elements
+After the script successfully updates `src/reuters_news.json`, you need to commit and push this change to your GitHub repository:
 
-- **Color Scheme**:
-  - Uses a clean, professional color palette, with an **orange accent color** (#d64000) inspired by the Reuters design.
+```bash
+git add src/reuters_news.json
+git commit -m "Update Reuters news data"
+git push origin main # Or your default branch
+```
 
-- **Typography**:
-  - **Helvetica Neue** is used for a modern, clean, and highly readable font.
+## Scraper Script (`scripts/update_news.js`)
 
-- **Responsive Grid Layout**:
-  - News items are arranged in a responsive **grid layout** that adjusts to different screen sizes and device types.
+This Node.js script is responsible for fetching and processing the news data.
 
----
+*   **Functionality:**
+    *   Fetches the XML content from the specified Reuters World News RSS feed URL (`https://cdn.feedcontrol.net/8/1115-TvWAhu4G064WT.xml`).
+    *   Uses `axios` for making the HTTP request.
+    *   Includes retry logic (up to 3 attempts with a 2-second delay) and a request timeout to handle temporary network issues.
+    *   Validates the fetched XML using `fast-xml-parser`.
+    *   Parses the valid XML into a JavaScript object.
+    *   Maps the relevant data from each news item (`<item>`) in the feed (title, link, pubDate, description, media:content/enclosure for image URL) to a structured format.
+    *   Provides fallbacks for missing data fields (e.g., "No title available").
+    *   Assigns a stable ID using the feed's `guid` if available, otherwise generates one.
+    *   Saves the resulting array of article objects as a JSON file to `src/reuters_news.json`, overwriting the previous content.
+*   **Dependencies:** `axios`, `fast-xml-parser` (these are installed via `npm install` in the main project).
+*   **Execution:** Run manually using `node scripts/update_news.js` from the project root.
 
-## Installation and Setup
+## React Integration
 
-To run the app locally, follow these steps:
+1.  **Data Loading (`src/data.js`):**
+    *   This file now directly imports the `reuters_news.json` file.
+    *   It maps the raw data from the JSON file into the `newsItems` array, ensuring the structure matches what the React components expect (e.g., formatting dates, providing placeholder images if `imageUrl` is missing).
+2.  **Data Display (`src/App.jsx`):**
+    *   Imports `newsItems` from `src/data.js`.
+    *   Uses the `useState` and `useEffect` hooks to load the news data into the component's state (`currentNews`).
+    *   Renders the list of news articles using the `Grid` and `ItemStyle` styled components.
+    *   The `NewsItem` component has been updated to:
+        *   Accept and display the `summary`.
+        *   Wrap the `title` in an `<a>` tag linking to the original article `url`.
+        *   Include basic error handling for missing images (`onError` on the `<img>` tag).
+    *   Category filtering has been simplified/removed as the current feed only provides "World" news.
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/yourusername/nassertology-daily.git
+## Deployment
+
+This is a standard React application built with Vite. You can deploy it to various static hosting platforms.
+
+1.  **Build the Application:**
+    ```bash
+    npm run build
+    ```
+    This command creates a `dist` folder containing the optimized static assets for your application.
+2.  **Deploy the `dist` folder:**
+    *   **Platforms:** You can deploy the contents of the `dist` folder to services like:
+        *   Vercel
+        *   Netlify
+        *   GitHub Pages
+        *   AWS S3 + CloudFront
+        *   Other static web hosts.
+    *   **Process:** Most platforms allow you to connect your GitHub repository directly. They will automatically detect it's a Vite/React project, run the build command (`npm run build`), and deploy the resulting `dist` folder.
+    *   **Manual Upload:** Alternatively, you can manually upload the contents of the `dist` folder to your chosen hosting provider.
+
+**Important:** Ensure that the `src/reuters_news.json` file is committed to your repository *before* deploying. The build process includes this JSON file, so the deployed application will contain the news data from the last time the update script was run and committed.
+

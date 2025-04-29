@@ -1,101 +1,16 @@
-export const newsItems = [
-  {
-    id: 1,
-    title: "New Technology Breakthrough in AI",
-    category: "Technology",
-    innerCategory: "Artificial Intelligence",
-    date: "2024-03-20",
-    imageUrl: "https://picsum.photos/400/250?random=1"
-  },
-  {
-    id: 2,
-    title: "Global Climate Summit Results",
-    category: "Environment",
-    innerCategory: "Climate Change",
-    date: "2024-03-19",
-    imageUrl: "https://picsum.photos/400/250?random=2"
-  },
-  {
-    id: 3,
-    title: "Sports Championship Finals",
-    category: "Sports",
-    innerCategory: "Championships",
-    date: "2024-03-18",
-    imageUrl: "https://picsum.photos/400/250?random=3"
-  },
-  {
-    id: 4,
-    title: "Economic Growth Report",
-    category: "Business",
-    innerCategory: "Economy",
-    date: "2024-03-17",
-    imageUrl: "https://picsum.photos/400/250?random=4"
-  },
-  {
-    id: 5,
-    title: "New Technology Breakthrough in AI",
-    category: "Technology",
-    innerCategory: "Machine Learning",
-    date: "2024-03-20",
-    imageUrl: "https://picsum.photos/400/250?random=1"
-  },
-  {
-    id: 6,
-    title: "Global Climate Summit Results",
-    category: "Environment",
-    innerCategory: "Sustainability",
-    date: "2024-03-19",
-    imageUrl: "https://picsum.photos/400/250?random=2"
-  },
-  {
-    id: 7,
-    title: "Sports Championship Finals",
-    category: "Sports",
-    innerCategory: "Tournaments",
-    date: "2024-03-18",
-    imageUrl: "https://picsum.photos/400/250?random=3"
-  },
-  {
-    id: 8,
-    title: "Economic Growth Report",
-    category: "Business",
-    innerCategory: "Finance",
-    date: "2024-03-17",
-    imageUrl: "https://picsum.photos/400/250?random=4"
-  },
-  {
-    id: 9,
-    title: "New Technology Breakthrough in AI",
-    category: "Technology",
-    innerCategory: "Robotics",
-    date: "2024-03-20",
-    imageUrl: "https://picsum.photos/400/250?random=1"
-  },
-  {
-    id: 10,
-    title: "Global Climate Summit Results",
-    category: "Environment",
-    innerCategory: "Green Energy",
-    date: "2024-03-19",
-    imageUrl: "https://picsum.photos/400/250?random=2"
-  },
-  {
-    id: 11,
-    title: "Sports Championship Finals",
-    category: "Sports",
-    innerCategory: "Team Sports",
-    date: "2024-03-18",
-    imageUrl: "https://picsum.photos/400/250?random=3"
-  },
-  {
-    id: 12,
-    title: "Economic Growth Report",
-    category: "Business",
-    innerCategory: "Market Analysis",
-    date: "2024-03-17",
-    imageUrl: "https://picsum.photos/400/250?random=4"
-  },
-];
+import newsData from './reuters_news.json';
+
+// Map the fetched Reuters data to the structure expected by the components
+export const newsItems = newsData.map((item, index) => ({
+  id: index + 1, // Generate a simple ID
+  title: item.title || 'No Title',
+  category: item.category || 'General', // Use the category from the feed ('World')
+  innerCategory: item.category || 'General', // Use the same for innerCategory for now
+  date: item.publishDate ? item.publishDate.split('T')[0] : new Date().toISOString().split('T')[0], // Format date as YYYY-MM-DD
+  imageUrl: item.imageUrl || `https://picsum.photos/400/250?random=${index + 1}`, // Use placeholder if no image
+  summary: item.summary || 'No summary available.', // Add summary field
+  url: item.url || '#' // Add url field
+}));
 
 export const device = {
   mobile: '500px',
@@ -103,3 +18,4 @@ export const device = {
   laptop: '1024px',
   desktop: '1440px'
 };
+

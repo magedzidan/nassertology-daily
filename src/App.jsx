@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import './App.css'
-import { newsItems, device } from './data';
-import styled, { createGlobalStyle } from 'styled-components'
+import { useState, useEffect } from 'react';
+import './App.css';
+import { newsItems, device } from './data'; // Imports the mapped data from reuters_news.json
+import styled, { createGlobalStyle } from 'styled-components';
 
 // Basic Global Styles (Inspired by Reuters)
 const GlobalStyle = createGlobalStyle`
@@ -15,11 +15,10 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
   a {
-    color: #333; // Basic blue link color
+    color: #111; // Link color to match title
     text-decoration: none;
     &:hover {
       text-decoration: underline;
-
     }
   }
 `;
@@ -40,155 +39,49 @@ const AppHeader = styled.header`
   }
 `;
 
-const Inner_Categrios=styled.div`
-display:flex;
-flex-direction:row;
-gap:10px;
-max-width:800px;
-justify-content:start;
-margin: 10px 20px;
+// Removed Inner_Categrios and Categrios styled components as filtering is simplified
 
->button{
-  background-color: white;
-  padding: 10px 20px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: #483c3c;
-  &:hover {
-    font-weight:900;
-    box-shadow: 0 4px 8px rgba(72, 60, 60, 0.2);
-    transform: translateY(-1px);
-    transition: all 0.3s ease;
-  }
-
-  &:focus {
-    font-weight:900;
-    box-shadow: 0 4px 8px rgba(72, 60, 60, 0.2);
-    transform: translateY(-1px);
-    transition: all 0.3s ease;
-
-    }
-}
-`
-
-const Categrios = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 0.1rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #847f7f;
-
-  > button {
-    background-color: white;
-    padding: 10px 40px;
-    border: 1px solid #ffffff;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #483c3c;
-    &:hover {
-      font-weight: 800;
-      transition: all 0.1s ease;
-
-    }
-    &:focus {
-      font-weight: 800;
-      transition: all 0.1s ease;
-
-    }
-  }
-`;
-
-// Main Grid Layout
+// Main Grid Layout (Adjusted for potentially fewer items, kept responsive)
 const Grid = styled.main`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px; 
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); // More flexible grid
+  gap: 20px;
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
-  
-  > div:first-child {
-    grid-column: 1 / 4;
-    grid-row: 1 / 3;
 
-    img.news-image {
-      height: 500px;
-      object-fit: cover;
-    }
-  }
+  // Removed first-child specific styling for simplicity, can be added back if needed
 
-  // Styles for Laptop and smaller (where separators appear)
   @media (max-width: ${device.laptop}) {
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 0 20px;
-    
-    > div {
-        border-bottom: 1px solid #e0e0e0; 
-        padding-bottom: 20px; 
-        margin-bottom: 20px; 
-    }
-
-
-
-    > div:first-child {
-      grid-column: 1 / 3;
-      margin-bottom: 20px; 
-    }
+    // Adjustments if needed for laptop
   }
 
   @media (max-width: ${device.tablet}) {
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 0 20px; 
-    
-     > div {
-     }
-
-    > div:first-child {
-      grid-column: 1 / 3;
-    }
+     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 
   @media (max-width: ${device.mobile}) {
-    grid-template-columns: 1fr; 
-    gap: 0;
-
-    > div {
-       
-        padding-left: 0; 
-        padding-right: 0;
-    }
-    
-    > div:first-child {
-      grid-column: 1 / 2;
-      grid-row: 1 / 2; 
-      
-      img.news-image {
-        height: 300px;
-      }
-    }
+    grid-template-columns: 1fr;
   }
 `;
 
-
 const ItemStyle = styled.div`
-  background-color: transparent; 
-  border-radius: 0; 
+  background-color: transparent;
+  border-radius: 0;
   overflow: hidden;
-  border: none; 
-  box-shadow: none; 
+  border: none;
+  box-shadow: none;
   transition: transform 0.2s;
   text-align: start;
   display: flex;
   flex-direction: column;
+  border-bottom: 1px solid #e0e0e0; // Add separator for consistency
+  padding-bottom: 20px;
+  margin-bottom: 20px;
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: none; 
+    box-shadow: none;
   }
 
   .news-image {
@@ -196,22 +89,17 @@ const ItemStyle = styled.div`
       height: 180px; // Standard image height
       object-fit: cover;
       display: block;
+      margin-bottom: 10px; // Space below image
   }
 
   .news-content {
-      padding: 10px 0 0 0; // Remove side/bottom padding here
-      flex-grow: 1; 
+      padding: 0; // Remove padding here
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-between; 
+      justify-content: space-between;
   }
-  .news-inner-category{
-    display:block;
-      font-size: 0.75rem;
-      color: #555;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-  }
+
   .news-category {
       display: inline-block;
       font-size: 0.75rem;
@@ -223,46 +111,61 @@ const ItemStyle = styled.div`
 
   .news-title {
       font-size: 1.1rem;
-      margin: 0 0 0px 0;
+      margin: 0 0 8px 0; // Space below title
       color: #111;
       font-weight: 600;
       line-height: 1.3;
+  }
+
+  .news-summary {
+      font-size: 0.9rem;
+      color: #444;
+      line-height: 1.4;
+      margin-bottom: 10px;
   }
 
   .news-date {
       display: block;
       color: #666;
       font-size: 0.8rem;
-      margin-top: 5px;
+      margin-top: auto; // Push date to bottom
   }
 `;
 
-// Date Formatting Function
+// Date Formatting Function (Keep as is)
 function formatDate(dateString) {
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      return dateString; 
+      // Try parsing without assuming strict ISO format if needed
+      const parsedDate = Date.parse(dateString);
+      if (!isNaN(parsedDate)) {
+         const d = new Date(parsedDate);
+         // Format as needed, e.g., just date
+         return d.toLocaleDateString('en-CA'); // YYYY-MM-DD
+      }
+      return dateString; // Return original if still invalid
     }
-    const options = { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'shortOffset' };
-    let formatted = new Intl.DateTimeFormat('en-US', options).format(date);
-    return formatted;
+    // Format as YYYY-MM-DD
+    return date.toISOString().split('T')[0];
   } catch (e) {
     console.error("Error formatting date:", e);
-    return dateString; 
+    return dateString;
   }
 }
 
-// News Item Component (now simpler, styling handled by ItemStyle)
-function NewsItem({ title, category, date, imageUrl, innerCategory }) {
+// News Item Component - Updated to include summary and link
+function NewsItem({ title, category, date, imageUrl, summary, url }) {
   return (
     <>
-      <img src={imageUrl} alt={title} className="news-image" />
+      {imageUrl && <img src={imageUrl} alt={title} className="news-image" onError={(e) => { e.target.style.display = 'none'; }} />} {/* Hide image on error */}
       <div className="news-content">
-        <div> 
+        <div>
           <span className="news-category">{category}</span>
-          <span className="news-inner-category">{innerCategory}</span>
-          <h2 className="news-title">{title}</h2>
+          <a href={url} target="_blank" rel="noopener noreferrer">
+             <h2 className="news-title">{title}</h2>
+          </a>
+          <p className="news-summary">{summary}</p>
         </div>
         <span className="news-date">{formatDate(date)}</span>
       </div>
@@ -271,72 +174,40 @@ function NewsItem({ title, category, date, imageUrl, innerCategory }) {
 }
 
 function App() {
-  const [currentCategory, setCurrentCategory] = useState(newsItems);
-  const [innerCategoryState, setinnerCategoryState] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  // State now just holds all news items, filtering removed for simplicity
+  const [currentNews, setCurrentNews] = useState([]);
 
-  function HandleCategory(category) {
-    setSelectedCategory(category);
-    setCurrentCategory(newsItems.filter((item) => item.category === category));
-    setinnerCategoryState(true);
-  }
-
-  function HandleInnerCategory(innerCategory) {
-    setCurrentCategory(newsItems.filter((item) => 
-      item.category === selectedCategory && item.innerCategory === innerCategory
-    ));
-  }
+  // Load news items on component mount
+  useEffect(() => {
+    // newsItems is imported directly from data.js which now reads the JSON
+    setCurrentNews(newsItems);
+  }, []);
 
   function HandleResetPage(){
-    setCurrentCategory(newsItems);
-    setinnerCategoryState(false);
-    setSelectedCategory(null);
+     // No filtering to reset, maybe refresh data in future?
+     // For now, just ensures clicking title doesn't break anything
+     console.log("Resetting page view...");
   }
-
-  // Get unique inner categories for the selected category
-  const uniqueInnerCategories = selectedCategory 
-    ? [...new Set(
-        newsItems
-          .filter(item => item.category === selectedCategory)
-          .map(item => item.innerCategory)
-      )]
-    : [];
-
-  // Get unique categories
-  const uniqueCategories = [...new Set(newsItems.map(item => item.category))];
 
   return (
     <>
       <GlobalStyle />
       <AppHeader>
-        <h1 onClick={()=>HandleResetPage()}>Nasrtology</h1>
-        <Categrios>
-          {uniqueCategories.map((category, index) => (
-            <button key={index} onClick={() => HandleCategory(category)}>
-              {category}
-            </button>
-          ))}
-        </Categrios> 
+        {/* Make title clickable, but action is simplified */}
+        <h1 onClick={HandleResetPage}>NasserTology Daily</h1>
+        {/* Removed category buttons */}
       </AppHeader>
-      <Inner_Categrios>
-        {innerCategoryState && uniqueInnerCategories.map((innerCategory, index) => (
-          <button 
-            key={index} 
-            onClick={() => HandleInnerCategory(innerCategory)}
-          >
-            {innerCategory}
-          </button>
-        ))}
-      </Inner_Categrios>
+      {/* Removed inner category buttons */}
       <Grid>
-        {currentCategory.map((item, index) => (
+        {currentNews.map((item) => (
           <ItemStyle key={item.id}>
             <NewsItem
               title={item.title}
               category={item.category}
-              innerCategory={item.innerCategory}
               date={item.date}
               imageUrl={item.imageUrl}
+              summary={item.summary} // Pass summary
+              url={item.url} // Pass url
             />
           </ItemStyle>
         ))}
